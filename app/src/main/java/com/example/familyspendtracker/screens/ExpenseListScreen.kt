@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -40,7 +41,25 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Spese registrate", style = MaterialTheme.typography.titleMedium)
+        // 🔥 Header con titolo e icona
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Spese registrate", style = MaterialTheme.typography.titleMedium)
+            IconButton(onClick = {
+                navController.navigate("add_expense")
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Aggiungi Spesa",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
 
         // 🔥 Sezione per il Balance Complessivo - Design Evidenziato
         Card(
@@ -95,41 +114,48 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
-                            Text("Data: $formattedDate")
-                            Text("Importo: €${"%.2f".format(expense.amount)}")
-                            Text("Categoria: $categoryName")
-                            Text("Wallet: $walletName")
-                            Text("Descrizione: ${expense.description}")
-                            if (expense.planned) {
-                                Text("💡 Spesa pianificata", style = MaterialTheme.typography.labelSmall)
+                            // 🔥 Riga principale compatta
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text("Data: $formattedDate")
+                                    Text("Importo: €${"%.2f".format(expense.amount)}")
+                                    Text("Categoria: $categoryName")
+                                    Text("Wallet: $walletName")
+                                }
+
+                                Row {
+                                    IconButton(onClick = {
+                                        navController.navigate("edit_expense/${expense.id}")
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Edit,
+                                            contentDescription = "Modifica spesa",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+
+                                    IconButton(onClick = {
+                                        viewModel.deleteExpense(expense)
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Elimina spesa",
+                                            tint = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                }
                             }
 
-                            // 🔥 Sezione Icone
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                IconButton(onClick = {
-                                    navController.navigate("edit_expense/${expense.id}")
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Edit,
-                                        contentDescription = "Modifica spesa",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-
-                                IconButton(onClick = {
-                                    viewModel.deleteExpense(expense)
-                                }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Elimina spesa",
-                                        tint = MaterialTheme.colorScheme.error
-                                    )
-                                }
+                            // 🔥 Riga descrizione compatta
+                            if (expense.description.isNotEmpty()) {
+                                Text("Descrizione: ${expense.description}")
+                            }
+                            if (expense.planned) {
+                                Text("💡 Spesa pianificata", style = MaterialTheme.typography.labelSmall)
                             }
                         }
                     }
