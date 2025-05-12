@@ -18,6 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.familyspendtracker.R
 
+// Caricamento del font personalizzato
+val LobsterFont = FontFamily(
+    Font(R.font.lobster_regular)
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModernAppBar(title: String, onMenuClick: () -> Unit) {
@@ -37,13 +42,14 @@ fun ModernAppBar(title: String, onMenuClick: () -> Unit) {
                 Text(
                     text = title,
                     style = TextStyle(
-                        fontSize = 24.sp,  // Più grande
-                        fontWeight = FontWeight.Bold,
+                        fontFamily = LobsterFont,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Normal,
                         color = Color.White,
-                        letterSpacing = 1.5.sp,
+                        letterSpacing = 1.2.sp,
                         shadow = Shadow(
                             color = Color.Black,
-                            blurRadius = 2f
+                            blurRadius = 3f
                         )
                     )
                 )
@@ -55,7 +61,7 @@ fun ModernAppBar(title: String, onMenuClick: () -> Unit) {
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFF4CAF50),  // Verde elegante
+            containerColor = Color(0xFF4CAF50),
             titleContentColor = Color.White,
             navigationIconContentColor = Color.White
         )

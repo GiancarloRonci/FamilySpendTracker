@@ -86,7 +86,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                     textAlign = TextAlign.Start
                 )
                 Text(
-                    text = "€${"%.2f".format(balanceComplessivo)}",
+                    text = "${"%.2f".format(balanceComplessivo)} €",
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
