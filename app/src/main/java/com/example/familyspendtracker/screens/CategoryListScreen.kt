@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -27,25 +26,7 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Lista Categorie")
-                        IconButton(onClick = {
-                            navController.navigate("add_category")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Aggiungi Categoria"
-                            )
-                        }
-                    }
-                }
-            )
+            TopAppBar(title = { Text("Lista Categorie") })
         }
     ) { paddingValues ->
         LazyColumn(

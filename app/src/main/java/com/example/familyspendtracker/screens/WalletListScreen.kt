@@ -5,7 +5,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -21,30 +20,12 @@ import com.example.familyspendtracker.viewmodel.ExpenseViewModel
 @Composable
 fun WalletListScreen(
     viewModel: ExpenseViewModel,
-    navController: NavController
+    onEditClick: (walletId: Int) -> Unit
 ) {
     val wallets by viewModel.wallets.observeAsState(emptyList())
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // 🔥 Titolo con icona di aggiunta
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Lista Wallet", style = MaterialTheme.typography.titleMedium)
-            IconButton(onClick = {
-                navController.navigate("add_wallet")
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Aggiungi Wallet",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+        Text("Lista Wallet", style = MaterialTheme.typography.titleMedium)
 
         if (wallets.isEmpty()) {
             Text("Nessun wallet disponibile.")
@@ -81,7 +62,7 @@ fun WalletListScreen(
                             // Icone
                             Row {
                                 IconButton(onClick = {
-                                    navController.navigate("edit_wallet/${wallet.id}")
+                                    onEditClick(wallet.id)
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Edit,
