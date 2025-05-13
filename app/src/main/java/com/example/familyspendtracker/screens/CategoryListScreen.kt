@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
@@ -18,6 +19,7 @@ import com.example.familyspendtracker.viewmodel.ExpenseViewModel
 import java.text.NumberFormat
 import java.util.*
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController) {
@@ -26,7 +28,21 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Lista Categorie") })
+            TopAppBar(
+                title = { Text("Lista Categorie") },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate("add_category")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Aggiungi Categoria",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
+
         }
     ) { paddingValues ->
         LazyColumn(
