@@ -125,10 +125,9 @@ fun MainNavigation(viewModel: ExpenseViewModel) {
 
 
                 composable("list_wallets") {
-                    WalletListScreen(viewModel) { walletId ->
-                        navController.navigate("edit_wallet/$walletId")
-                    }
+                    WalletListScreen(viewModel = viewModel, navController = navController)
                 }
+
 
                 composable("edit_wallet/{walletId}") { backStackEntry ->
                     val walletId = backStackEntry.arguments?.getString("walletId")?.toIntOrNull()
