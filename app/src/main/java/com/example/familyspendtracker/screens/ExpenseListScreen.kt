@@ -49,6 +49,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
 
+
     Column(modifier = Modifier.padding(16.dp)) {
 
         // 🔽 Filtro a tendina
@@ -91,28 +92,6 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔠 Header
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Spese registrate", style = MaterialTheme.typography.titleMedium)
-            IconButton(onClick = {
-                navController.navigate("add_expense")
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Aggiungi Spesa",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
         // 🔢 Balance complessivo
         Card(
             modifier = Modifier
@@ -147,6 +126,27 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
+        // Spacer(modifier = Modifier.height(16.dp))
+
+        // 🔠 Header
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Spese registrate", style = MaterialTheme.typography.titleMedium)
+            IconButton(onClick = {
+                navController.navigate("add_expense")
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Aggiungi Spesa",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        }
         if (filteredExpenses.isEmpty()) {
             Text("Nessuna spesa trovata.")
         } else {
