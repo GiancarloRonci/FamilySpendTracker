@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,9 +47,41 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
 
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
-
-
     Column(modifier = Modifier.padding(16.dp)) {
+
+        // 🔢 Balance complessivo PRIMA del filtro
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+            elevation = CardDefaults.cardElevation(6.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .background(MaterialTheme.colorScheme.primary),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Balance Complessivo",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.Start
+                )
+                Text(
+                    text = "€${"%.2f".format(balanceComplessivo)}",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    textAlign = TextAlign.End
+                )
+            }
+        }
 
         // 🔽 Filtro a tendina
         ExposedDropdownMenuBox(
@@ -92,41 +123,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        // 🔢 Balance complessivo
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            elevation = CardDefaults.cardElevation(6.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .background(MaterialTheme.colorScheme.primary),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "Balance Complessivo",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Start
-                )
-                Text(
-                    text = "€${"%.2f".format(balanceComplessivo)}",
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.End
-                )
-            }
-        }
-
-        // Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // 🔠 Header
         Row(
@@ -147,6 +144,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                 )
             }
         }
+
         if (filteredExpenses.isEmpty()) {
             Text("Nessuna spesa trovata.")
         } else {
