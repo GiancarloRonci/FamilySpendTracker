@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -24,24 +25,75 @@ import com.example.familyspendtracker.viewmodel.ExpenseViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController) {
     val expenses by viewModel.expenses.observeAsState(emptyList())
     val categories by viewModel.categories.observeAsState(emptyList())
     val wallets by viewModel.wallets.observeAsState(emptyList())
 
-    // 🔥 Calcolo del Balance Complessivo
+    val filterOptions = listOf("Ultimi 5 giorni", "Ultimi 15 giorni", "Ultimo mese", "Ultimo anno")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedFilter by remember { mutableStateOf(filterOptions[0]) }
+    var selectedDays by remember { mutableStateOf(5) }
+
+    val now = System.currentTimeMillis()
+    val filteredExpenses = expenses
+        .filter { it.timestamp >= now - selectedDays * 24 * 60 * 60 * 1000L }
+        .sortedByDescending { it.timestamp }
+
     val totalWalletBalance = wallets.sumOf { it.currentBalance }
     val totalCategoryBalance = categories.sumOf { it.currentBalance }
     val balanceComplessivo = totalWalletBalance - totalCategoryBalance
 
-    // 🔄 Ordinamento delle spese in ordine decrescente
-    val sortedExpenses = expenses.sortedByDescending { it.timestamp }
-
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
+
     Column(modifier = Modifier.padding(16.dp)) {
-        // 🔥 Header con titolo e icona
+
+        // 🔽 Filtro a tendina
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TextField(
+                value = selectedFilter,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Filtra per periodo") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                filterOptions.forEachIndexed { index, option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedFilter = option
+                            selectedDays = when (index) {
+                                0 -> 5
+                                1 -> 15
+                                2 -> 30
+                                3 -> 365
+                                else -> 5
+                            }
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 🔠 Header
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,7 +113,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        // 🔥 Sezione per il Balance Complessivo - Design Evidenziato
+        // 🔢 Balance complessivo
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -95,14 +147,14 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        if (sortedExpenses.isEmpty()) {
+        if (filteredExpenses.isEmpty()) {
             Text("Nessuna spesa trovata.")
         } else {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(sortedExpenses) { expense ->
+                items(filteredExpenses) { expense ->
                     val categoryName = categories.find { it.id == expense.passiveCategoryId }?.name ?: "Categoria?"
                     val walletName = wallets.find { it.id == expense.walletId }?.name ?: "Wallet?"
                     val formattedDate = dateFormat.format(Date(expense.timestamp))
@@ -114,7 +166,6 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                         elevation = CardDefaults.cardElevation(4.dp)
                     ) {
                         Column(modifier = Modifier.padding(8.dp)) {
-                            // 🔥 Riga principale compatta
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -150,7 +201,6 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                                 }
                             }
 
-                            // 🔥 Riga descrizione compatta
                             if (expense.description.isNotEmpty()) {
                                 Text("Descrizione: ${expense.description}")
                             }
