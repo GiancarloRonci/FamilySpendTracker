@@ -3,6 +3,7 @@ package com.example.familyspendtracker.screens
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -29,12 +30,10 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    // Calcolo del Balance Complessivo
     val totalWalletBalance = wallets.sumOf { it.currentBalance }
     val totalCategoryBalance = categories.sumOf { it.currentBalance }
     val balanceComplessivo = totalWalletBalance - totalCategoryBalance
 
-    // Stato per il messaggio di conferma
     var showMessage by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -43,13 +42,16 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 🔥 Titolo
         item {
             Text("Balance Overview", style = MaterialTheme.typography.titleLarge)
         }
 
-        // 🔥 Balance Complessivo su una riga
+        // 🔢 Balance Complessivo formattato
         item {
+            val formattedBalance = "%.2f".format(balanceComplessivo)
+            val sign = if (balanceComplessivo >= 0) "+" else "-"
+            val balanceText = "$sign$formattedBalance€"
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -61,21 +63,22 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .background(MaterialTheme.colorScheme.primary),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Balance Complessivo",
+                        text = "Balance Complessivo:",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         textAlign = TextAlign.Start
                     )
                     Text(
-                        "€${"%.2f".format(balanceComplessivo)}",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        text = balanceText,
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold,
                         color = Color.White,
                         textAlign = TextAlign.End
                     )
@@ -83,7 +86,7 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
             }
         }
 
-        // 🔥 Pulsante Copia Testo
+        // 🔘 Pulsante copia bilancio
         item {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -107,7 +110,6 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
                         val clip = ClipData.newPlainText("Balance Overview", formattedText)
                         clipboard.setPrimaryClip(clip)
 
-                        // 🔥 Mostra il messaggio di conferma
                         showMessage = true
                         coroutineScope.launch {
                             delay(2000)
@@ -119,7 +121,6 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
                     Text("Copia Bilancio Testuale")
                 }
 
-                // 🔥 Messaggio di conferma
                 if (showMessage) {
                     Text(
                         text = "✅ Testo copiato negli appunti!",
@@ -130,7 +131,7 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
             }
         }
 
-        // 🔥 Lista Wallet
+        // 📄 Lista Wallet
         item {
             Text("Lista Wallet", style = MaterialTheme.typography.titleMedium)
         }
@@ -148,7 +149,7 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
             }
         }
 
-        // 🔥 Lista Categorie
+        // 📄 Lista Categorie
         item {
             Spacer(modifier = Modifier.height(16.dp))
             Text("Lista Categorie", style = MaterialTheme.typography.titleMedium)
