@@ -69,6 +69,13 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
                 .padding(vertical = 4.dp)
         )
 
+        // ✅ Campo in sola lettura: Saldo attuale
+        Text(
+            text = "Saldo attuale: €${"%.2f".format(category.currentBalance)}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
+        )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,6 +110,5 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
         ) {
             Text("Salva modifiche")
         }
-
     }
 }

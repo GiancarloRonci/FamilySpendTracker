@@ -39,9 +39,11 @@ fun EditWalletScreen(viewModel: ExpenseViewModel, walletId: Int) {
         formatter.format(Date(wallet.startTimestamp))
     }
 
-    Column(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
 
         Text("Modifica Wallet", style = MaterialTheme.typography.titleMedium)
 
@@ -63,7 +65,17 @@ fun EditWalletScreen(viewModel: ExpenseViewModel, walletId: Int) {
                 .padding(vertical = 4.dp)
         )
 
-        Text("Inizio validità: $formattedDate", modifier = Modifier.padding(top = 8.dp))
+        // ✅ Campo in sola lettura: Saldo attuale
+        Text(
+            text = "Saldo attuale: €${"%.2f".format(wallet.currentBalance)}",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
+        )
+
+        Text(
+            "Inizio validità: $formattedDate",
+            modifier = Modifier.padding(top = 8.dp)
+        )
 
         Button(
             onClick = {
