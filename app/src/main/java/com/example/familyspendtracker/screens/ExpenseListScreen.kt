@@ -67,61 +67,30 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Balance Complessivo",
+                    text = "Balance Complessivo:",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Start
                 )
+
+                val formattedBalance = if (balanceComplessivo >= 0) {
+                    "+%.2f€".format(balanceComplessivo)
+                } else {
+                    "%.2f€".format(balanceComplessivo)
+                }
+
                 Text(
-                    text = "€${"%.2f".format(balanceComplessivo)}",
+                    text = formattedBalance,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.End
                 )
             }
+
         }
 
-        // 🔽 Filtro a tendina
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            TextField(
-                value = selectedFilter,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Filtra per periodo") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                filterOptions.forEachIndexed { index, option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedFilter = option
-                            selectedDays = when (index) {
-                                0 -> 5
-                                1 -> 15
-                                2 -> 30
-                                3 -> 365
-                                else -> 5
-                            }
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
