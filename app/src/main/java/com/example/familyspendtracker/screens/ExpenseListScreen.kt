@@ -97,8 +97,13 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        // 🔽 Filtri verticali
-        Column(modifier = Modifier.fillMaxWidth()) {
+        // 🔽 Filtri verticali con sfondo uniforme
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .padding(8.dp)
+        ) {
             // Filtro temporale
             ExposedDropdownMenuBox(
                 expanded = expandedPeriod,
@@ -116,10 +121,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                         .fillMaxWidth()
                         .height(48.dp),
                     textStyle = TextStyle(fontSize = 14.sp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                    )
+                    colors = TextFieldDefaults.colors()
                 )
                 ExposedDropdownMenu(
                     expanded = expandedPeriod,
@@ -163,10 +165,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                         .fillMaxWidth()
                         .height(48.dp),
                     textStyle = TextStyle(fontSize = 14.sp),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
-                    )
+                    colors = TextFieldDefaults.colors()
                 )
                 ExposedDropdownMenu(
                     expanded = expandedCategory,
@@ -265,7 +264,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                                 Text("Descrizione: ${expense.description}")
                             }
                             if (expense.planned) {
-                                Text("💡 Spesa pianificata", style = MaterialTheme.typography.labelSmall)
+                                Text("\uD83D\uDCA1 Spesa pianificata", style = MaterialTheme.typography.labelSmall)
                             }
                         }
                     }
