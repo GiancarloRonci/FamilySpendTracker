@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,13 +34,22 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
 
     // Filtro temporale
     val filterOptions = listOf("Ultimi 5 giorni", "Ultimi 15 giorni", "Ultimo mese", "Ultimo anno")
-    var expanded by remember { mutableStateOf(false) }
+    var expandedPeriod by remember { mutableStateOf(false) }
     var selectedFilter by remember { mutableStateOf(filterOptions[0]) }
     var selectedDays by remember { mutableStateOf(5) }
+
+    // Filtro categoria
+    val categoryNames = listOf("Tutte le categorie") + categories.map { it.name }
+    var expandedCategory by remember { mutableStateOf(false) }
+    var selectedCategory by remember { mutableStateOf("Tutte le categorie") }
 
     val now = System.currentTimeMillis()
     val filteredExpenses = expenses
         .filter { it.timestamp >= now - selectedDays * 24 * 60 * 60 * 1000L }
+        .filter {
+            selectedCategory == "Tutte le categorie" ||
+                    categories.find { cat -> cat.id == it.passiveCategoryId }?.name == selectedCategory
+        }
         .sortedByDescending { it.timestamp }
 
     val totalWalletBalance = wallets.sumOf { it.currentBalance }
@@ -87,41 +97,90 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
             }
         }
 
-        // 🔽 Filtro temporale
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            TextField(
-                value = selectedFilter,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Filtra per periodo") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+        // 🔽 Filtri verticali
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Filtro temporale
+            ExposedDropdownMenuBox(
+                expanded = expandedPeriod,
+                onExpandedChange = { expandedPeriod = !expandedPeriod },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                filterOptions.forEachIndexed { index, option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            selectedFilter = option
-                            selectedDays = when (index) {
-                                0 -> 5
-                                1 -> 15
-                                2 -> 30
-                                3 -> 365
-                                else -> 5
-                            }
-                            expanded = false
-                        }
+                TextField(
+                    value = selectedFilter,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Filtra per periodo", fontSize = 12.sp) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expandedPeriod) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    textStyle = TextStyle(fontSize = 14.sp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
                     )
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedPeriod,
+                    onDismissRequest = { expandedPeriod = false }
+                ) {
+                    filterOptions.forEachIndexed { index, option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                selectedFilter = option
+                                selectedDays = when (index) {
+                                    0 -> 5
+                                    1 -> 15
+                                    2 -> 30
+                                    3 -> 365
+                                    else -> 5
+                                }
+                                expandedPeriod = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Filtro categoria
+            ExposedDropdownMenuBox(
+                expanded = expandedCategory,
+                onExpandedChange = { expandedCategory = !expandedCategory },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TextField(
+                    value = selectedCategory,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Filtra per categoria", fontSize = 12.sp) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expandedCategory) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    textStyle = TextStyle(fontSize = 14.sp),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                    )
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedCategory,
+                    onDismissRequest = { expandedCategory = false }
+                ) {
+                    categoryNames.forEach { category ->
+                        DropdownMenuItem(
+                            text = { Text(category) },
+                            onClick = {
+                                selectedCategory = category
+                                expandedCategory = false
+                            }
+                        )
+                    }
                 }
             }
         }
