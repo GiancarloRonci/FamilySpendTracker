@@ -31,6 +31,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
     val categories by viewModel.categories.observeAsState(emptyList())
     val wallets by viewModel.wallets.observeAsState(emptyList())
 
+    // Filtro temporale
     val filterOptions = listOf("Ultimi 5 giorni", "Ultimi 15 giorni", "Ultimo mese", "Ultimo anno")
     var expanded by remember { mutableStateOf(false) }
     var selectedFilter by remember { mutableStateOf(filterOptions[0]) }
@@ -45,11 +46,14 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
     val totalCategoryBalance = categories.sumOf { it.currentBalance }
     val balanceComplessivo = totalWalletBalance - totalCategoryBalance
 
+    val formattedBalance = "%.2f".format(kotlin.math.abs(balanceComplessivo))
+    val sign = if (balanceComplessivo >= 0) "+" else "-"
+    val balanceText = "$sign$formattedBalance€"
+
     val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
 
     Column(modifier = Modifier.padding(16.dp)) {
-
-        // 🔢 Balance complessivo PRIMA del filtro
+        // 🔢 Balance Complessivo
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -73,28 +77,58 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                     color = Color.White,
                     textAlign = TextAlign.Start
                 )
-
-                val formattedBalance = if (balanceComplessivo >= 0) {
-                    "+%.2f€".format(balanceComplessivo)
-                } else {
-                    "%.2f€".format(balanceComplessivo)
-                }
-
                 Text(
-                    text = formattedBalance,
+                    text = balanceText,
                     fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.End
                 )
             }
-
         }
 
+        // 🔽 Filtro temporale
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            TextField(
+                value = selectedFilter,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Filtra per periodo") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                filterOptions.forEachIndexed { index, option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            selectedFilter = option
+                            selectedDays = when (index) {
+                                0 -> 5
+                                1 -> 15
+                                2 -> 30
+                                3 -> 365
+                                else -> 5
+                            }
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔠 Header
+        // 🔠 Intestazione
         Row(
             modifier = Modifier
                 .fillMaxWidth()
