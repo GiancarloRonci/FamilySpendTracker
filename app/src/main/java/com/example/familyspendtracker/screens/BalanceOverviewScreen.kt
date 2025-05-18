@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.familyspendtracker.viewmodel.ExpenseViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 @Composable
 fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
@@ -48,7 +49,7 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
 
         // 🔢 Balance Complessivo formattato
         item {
-            val formattedBalance = "%.2f".format(balanceComplessivo)
+            val formattedBalance = "%.2f".format(abs(balanceComplessivo))
             val sign = if (balanceComplessivo >= 0) "+" else "-"
             val balanceText = "$sign$formattedBalance€"
 

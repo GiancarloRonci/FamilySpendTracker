@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.familyspendtracker.viewmodel.ExpenseViewModel
+import kotlin.math.abs
 
 @Composable
 fun WalletListScreen(
@@ -33,7 +34,7 @@ fun WalletListScreen(
     val totalWalletBalance = wallets.sumOf { it.currentBalance }
     val totalCategoryBalance = categories.sumOf { it.currentBalance }
     val balanceComplessivo = totalWalletBalance - totalCategoryBalance
-    val formattedBalance = "%.2f".format(balanceComplessivo)
+    val formattedBalance = "%.2f".format(abs(balanceComplessivo))
     val sign = if (balanceComplessivo >= 0) "+" else "-"
 
     Column(modifier = Modifier.padding(16.dp)) {
