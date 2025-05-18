@@ -39,13 +39,13 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
     val sign = if (balanceComplessivo >= 0) "+" else "-"
     val balanceText = "$sign$formattedBalance€"
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.padding(16.dp)) {
 
-        // 🔢 Balance sopra la barra del titolo
+        // 🔢 Balance Complessivo
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 0.dp),
+                .padding(bottom = 8.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -75,31 +75,33 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
             }
         }
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Lista Categorie") },
-                    actions = {
-                        IconButton(onClick = {
-                            navController.navigate("add_category")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Aggiungi Categoria",
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    }
+        // 🔠 Header "Lista Categorie"
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text("Lista Categorie", style = MaterialTheme.typography.titleMedium)
+            IconButton(onClick = {
+                navController.navigate("add_category")
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Aggiungi Categoria",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
-        ) { paddingValues ->
+        }
+
+        // 🔽 Lista categorie
+        if (categories.isEmpty()) {
+            Text("Nessuna categoria disponibile.")
+        } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 2.dp),
-                    //.padding(top = paddingValues.calculateTopPadding()),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(categories) { category ->
                     Card(
