@@ -45,7 +45,7 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 0.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -75,7 +75,6 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
             }
         }
 
-        // 🔼 Scaffold con TopAppBar e contenuto
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -98,7 +97,8 @@ fun CategoryListScreen(viewModel: ExpenseViewModel, navController: NavController
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .padding(top = paddingValues.calculateTopPadding()),
+                    .padding(top = 2.dp),
+                    //.padding(top = paddingValues.calculateTopPadding()),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(categories) { category ->
