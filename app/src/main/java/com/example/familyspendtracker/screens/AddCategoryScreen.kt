@@ -58,11 +58,17 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
 
         OutlinedTextField(
             value = budget,
-            onValueChange = { budget = it },
+            onValueChange = { newValue ->
+                // Solo numeri decimali validi (es. 123.45)
+                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
+                    budget = newValue
+                }
+            },
             label = { Text("Budget iniziale") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
+                .padding(vertical = 4.dp),
+            singleLine = true
         )
 
         Box(
@@ -104,8 +110,5 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
         categories.forEach {
             Text("- ${it.name}: ${it.initialBudget}")
         }
-
     }
 }
-
-

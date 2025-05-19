@@ -67,5 +67,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation("androidx.compose.material3:material3:1.2.0")
     implementation(libs.androidx.navigation.compose)
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.ui:ui-text")
+    // implementation("androidx.compose.material3:material3:1.1.0")
 }

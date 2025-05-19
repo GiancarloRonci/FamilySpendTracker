@@ -50,14 +50,23 @@ fun AddWalletScreen(viewModel: ExpenseViewModel) {
             value = name,
             onValueChange = { name = it },
             label = { Text("Nome wallet") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
 
         OutlinedTextField(
             value = balance,
-            onValueChange = { balance = it },
+            onValueChange = { newValue ->
+                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
+                    balance = newValue
+                }
+            },
             label = { Text("Saldo iniziale") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            singleLine = true
         )
 
         Box(

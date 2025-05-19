@@ -59,16 +59,26 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
 
         OutlinedTextField(
             value = amount,
-            onValueChange = { amount = it },
+            onValueChange = { newValue ->
+                // Accetta solo numeri con massimo 2 cifre decimali
+                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
+                    amount = newValue
+                }
+            },
             label = { Text("Importo spesa") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            singleLine = true
         )
 
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
             label = { Text("Descrizione") },
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
         )
 
         // Dropdown categoria passiva

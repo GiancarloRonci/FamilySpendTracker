@@ -81,7 +81,7 @@ fun ExpenseListScreen(viewModel: ExpenseViewModel, navController: NavController)
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Balance Complessivo:",
+                    text = "Saldo:",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
