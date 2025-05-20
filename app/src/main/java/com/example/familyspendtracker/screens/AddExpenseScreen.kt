@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.familyspendtracker.data.Expense
@@ -25,6 +26,7 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
     var selectedPassiveCategoryId by remember { mutableStateOf<Int?>(null) }
     var selectedWalletId by remember { mutableStateOf<Int?>(null) }
     var isPlanned by remember { mutableStateOf(false) }
+    var amountError by remember { mutableStateOf(false) }
 
     val categories by viewModel.categories.observeAsState(emptyList())
     val wallets by viewModel.wallets.observeAsState(emptyList())
@@ -60,17 +62,24 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
         OutlinedTextField(
             value = amount,
             onValueChange = { newValue ->
-                // Accetta solo numeri con massimo 2 cifre decimali
-                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
-                    amount = newValue
-                }
+                amount = newValue
+                amountError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
             },
             label = { Text("Importo spesa") },
+            isError = amountError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
             singleLine = true
         )
+        if (amountError) {
+            Text(
+                text = "Inserire un numero valido con al massimo due decimali",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+            )
+        }
 
         OutlinedTextField(
             value = description,
@@ -81,7 +90,7 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
                 .padding(vertical = 4.dp)
         )
 
-        // Dropdown categoria passiva
+        // Categoria
         ExposedDropdownMenuBox(
             expanded = categoryExpanded,
             onExpandedChange = { categoryExpanded = !categoryExpanded }
@@ -112,7 +121,7 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
             }
         }
 
-        // Dropdown wallet
+        // Wallet
         ExposedDropdownMenuBox(
             expanded = walletExpanded,
             onExpandedChange = { walletExpanded = !walletExpanded }
@@ -143,7 +152,6 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
             }
         }
 
-        // Data spesa
         OutlinedTextField(
             value = formattedDate,
             onValueChange = {},
@@ -162,20 +170,20 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
 
         Button(
             onClick = {
-                amount.toDoubleOrNull()?.let { parsedAmount ->
-                    if (selectedPassiveCategoryId != null && selectedWalletId != null) {
-                        val expense = Expense(
-                            timestamp = selectedDate,
-                            amount = parsedAmount,
-                            walletId = selectedWalletId!!,
-                            passiveCategoryId = selectedPassiveCategoryId!!,
-                            planned = isPlanned,
-                            description = description
-                        )
-                        viewModel.addExpense(expense)
-                        amount = ""
-                        description = ""
-                    }
+                val parsedAmount = amount.toDoubleOrNull()
+                amountError = parsedAmount == null
+                if (!amountError && selectedPassiveCategoryId != null && selectedWalletId != null) {
+                    val expense = Expense(
+                        timestamp = selectedDate,
+                        amount = parsedAmount!!,
+                        walletId = selectedWalletId!!,
+                        passiveCategoryId = selectedPassiveCategoryId!!,
+                        planned = isPlanned,
+                        description = description
+                    )
+                    viewModel.addExpense(expense)
+                    amount = ""
+                    description = ""
                 }
             },
             modifier = Modifier.padding(top = 8.dp)
