@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.familyspendtracker.data.Category
@@ -21,6 +22,7 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
 
     var name by remember { mutableStateOf("") }
     var budget by remember { mutableStateOf("") }
+    var budgetError by remember { mutableStateOf(false) }
 
     val calendar = remember { Calendar.getInstance() }
     var selectedDate by remember { mutableStateOf(calendar.timeInMillis) }
@@ -59,17 +61,25 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
         OutlinedTextField(
             value = budget,
             onValueChange = { newValue ->
-                // Solo numeri decimali validi (es. 123.45)
-                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
-                    budget = newValue
-                }
+                budget = newValue
+                budgetError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
             },
             label = { Text("Budget iniziale") },
+            isError = budgetError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
             singleLine = true
         )
+
+        if (budgetError) {
+            Text(
+                text = "Inserire un numero valido (es. 123.45)",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -89,15 +99,18 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
 
         Button(
             onClick = {
-                val parsedBudget = budget.toDoubleOrNull() ?: 0.0
-                val category = Category(
-                    name = name,
-                    initialBudget = parsedBudget,
-                    budgetStartDate = selectedDate
-                )
-                viewModel.addCategory(category)
-                name = ""
-                budget = ""
+                val parsedBudget = budget.toDoubleOrNull()
+                budgetError = parsedBudget == null
+                if (!budgetError) {
+                    val category = Category(
+                        name = name,
+                        initialBudget = parsedBudget!!,
+                        budgetStartDate = selectedDate
+                    )
+                    viewModel.addCategory(category)
+                    name = ""
+                    budget = ""
+                }
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {

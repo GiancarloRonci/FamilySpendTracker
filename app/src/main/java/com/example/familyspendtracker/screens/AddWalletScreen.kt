@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.familyspendtracker.data.Wallet
@@ -21,6 +22,7 @@ fun AddWalletScreen(viewModel: ExpenseViewModel) {
 
     var name by remember { mutableStateOf("") }
     var balance by remember { mutableStateOf("") }
+    var balanceError by remember { mutableStateOf(false) }
 
     val calendar = remember { Calendar.getInstance() }
     var selectedDate by remember { mutableStateOf(calendar.timeInMillis) }
@@ -58,16 +60,25 @@ fun AddWalletScreen(viewModel: ExpenseViewModel) {
         OutlinedTextField(
             value = balance,
             onValueChange = { newValue ->
-                if (newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))) {
-                    balance = newValue
-                }
+                balance = newValue
+                balanceError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
             },
             label = { Text("Saldo iniziale") },
+            isError = balanceError,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
             singleLine = true
         )
+
+        if (balanceError) {
+            Text(
+                text = "Inserire un numero valido (es. 123.45)",
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -87,15 +98,18 @@ fun AddWalletScreen(viewModel: ExpenseViewModel) {
 
         Button(
             onClick = {
-                val parsedBalance = balance.toDoubleOrNull() ?: 0.0
-                val wallet = Wallet(
-                    name = name,
-                    initialBalance = parsedBalance,
-                    currentBalance = parsedBalance
-                )
-                viewModel.addWallet(wallet)
-                name = ""
-                balance = ""
+                val parsedBalance = balance.toDoubleOrNull()
+                balanceError = parsedBalance == null
+                if (!balanceError) {
+                    val wallet = Wallet(
+                        name = name,
+                        initialBalance = parsedBalance!!,
+                        currentBalance = parsedBalance
+                    )
+                    viewModel.addWallet(wallet)
+                    name = ""
+                    balance = ""
+                }
             },
             modifier = Modifier.padding(top = 8.dp)
         ) {
