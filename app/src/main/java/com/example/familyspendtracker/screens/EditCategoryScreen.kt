@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -85,7 +86,7 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
             OutlinedTextField(
                 value = formattedDate,
                 onValueChange = {},
-                label = { Text("Data di inizio") },
+                label = { Text("Data Inizio Budget") },
                 readOnly = true,
                 enabled = false,
                 modifier = Modifier.fillMaxWidth()
@@ -110,5 +111,12 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
         ) {
             Text("Salva modifiche")
         }
+
+        Text(
+            text = "Modificando la data inizio budget, per il calcolo del balance residuo, verranno prese in considerazione solo le spese successive a tale data.",
+            color = Color(0xFF2E7D32),
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(top = 12.dp)
+        )
     }
 }
