@@ -60,7 +60,7 @@ fun EditWalletScreen(viewModel: ExpenseViewModel, walletId: Int) {
         OutlinedTextField(
             value = balance,
             onValueChange = { balance = it },
-            label = { Text("Saldo iniziale") },
+            label = { Text("Saldo Wallet") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 4.dp)
@@ -99,7 +99,10 @@ fun EditWalletScreen(viewModel: ExpenseViewModel, walletId: Int) {
         }
 
         Text(
-            text = "Modificando la data inizio budget, per il calcolo del balance residuo, verranno prese in considerazione solo le spese successive a tale data.",
+            text = "Modificando il saldo del wallet con un valore nuovo, per il balance " +
+                    "residuo verrà impostato con lo stesso valore e " +
+                    "verrà impostata la data di inizio validità del wallet all'istante attuale."
+            ,
             color = Color(0xFF2E7D32),
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(top = 12.dp)
