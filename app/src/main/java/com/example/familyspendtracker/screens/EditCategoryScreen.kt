@@ -1,6 +1,7 @@
 package com.example.familyspendtracker.screens
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -33,16 +34,30 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
 
     val calendar = remember { Calendar.getInstance().apply { timeInMillis = category.budgetStartDate } }
     var selectedDate by remember { mutableStateOf(category.budgetStartDate) }
-    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()) }
+    val dateFormat = remember { SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()) }
     val formattedDate = dateFormat.format(Date(selectedDate))
 
+    // Mostra prima il date picker, poi il time picker
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, day ->
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, day)
-            selectedDate = calendar.timeInMillis
+
+            // Dopo la selezione della data, mostra il time picker
+            TimePickerDialog(
+                context,
+                { _, hourOfDay, minute ->
+                    calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                    calendar.set(Calendar.MINUTE, minute)
+                    calendar.set(Calendar.SECOND, 0)
+                    selectedDate = calendar.timeInMillis
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+            ).show()
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
@@ -77,6 +92,7 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
             modifier = Modifier.padding(start = 4.dp, bottom = 8.dp)
         )
 
+        // Campo Data + Ora
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,7 +119,7 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
                         budgetStartDate = selectedDate
                     )
                     viewModel.updateCategory(updatedCategory)
-                    viewModel.refreshCategories() // 🔥 Forza il refresh
+                    viewModel.refreshCategories()
                     navController.navigateUp()
                 }
             },
