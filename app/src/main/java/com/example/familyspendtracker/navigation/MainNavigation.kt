@@ -31,10 +31,10 @@ fun MainNavigation(viewModel: ExpenseViewModel) {
 
     val menuItems = listOf(
         NavigationItem("Lista spese", "expense_list", Icons.Default.List),
-        NavigationItem("Nuova spesa", "add_expense", Icons.Default.Add),
+        NavigationItem("Nuova spesa", "add_expense", Icons.Default.AddCircle),
         NavigationItem("Aggiungi categoria", "add_category", Icons.Default.AddCircle),
+        NavigationItem("Aggiungi wallet", "add_wallet", Icons.Default.AddCircle),
         NavigationItem("Lista categorie", "list_categories", Icons.Default.Category),
-        NavigationItem("Aggiungi wallet", "add_wallet", Icons.Default.AccountBalance),
         NavigationItem("Lista wallet", "list_wallets", Icons.Default.AccountBalanceWallet),
         NavigationItem("Overview Bilancio", "balance_overview", Icons.Default.BarChart)
     )
