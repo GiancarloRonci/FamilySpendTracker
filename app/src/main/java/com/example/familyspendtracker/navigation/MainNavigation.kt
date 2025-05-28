@@ -30,7 +30,7 @@ fun MainNavigation(viewModel: ExpenseViewModel) {
     val currentRoute = currentDestination?.destination?.route
 
     val menuItems = listOf(
-        NavigationItem("Lista spese", "expense_list", Icons.Default.List),
+        NavigationItem("Home Page --> Lista spese", "expense_list", Icons.Default.List),
         NavigationItem("Nuova spesa", "add_expense", Icons.Default.AddCircle),
         NavigationItem("Aggiungi categoria", "add_category", Icons.Default.AddCircle),
         NavigationItem("Aggiungi wallet", "add_wallet", Icons.Default.AddCircle),

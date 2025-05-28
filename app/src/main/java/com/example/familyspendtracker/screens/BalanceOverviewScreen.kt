@@ -150,6 +150,39 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
             }
         }
 
+        // ➕ Totale wallet
+        item {
+            val totalWalletBalance = wallets.sumOf { it.currentBalance }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Totale Wallet",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "€${"%.2f".format(totalWalletBalance)}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+
+
         // 📄 Lista Categorie
         item {
             Spacer(modifier = Modifier.height(16.dp))
@@ -165,6 +198,36 @@ fun BalanceOverviewScreen(viewModel: ExpenseViewModel) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text("Nome: ${category.name}")
                     Text("Saldo Attuale: €${"%.2f".format(category.currentBalance)}")
+                }
+            }
+        }
+
+        // ➕ Totale categorie
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Totale Categorie",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "€${"%.2f".format(totalCategoryBalance)}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
