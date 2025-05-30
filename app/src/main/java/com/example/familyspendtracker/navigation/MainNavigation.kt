@@ -75,11 +75,11 @@ fun MainNavigation(viewModel: ExpenseViewModel) {
                 TopAppBar(
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.Circle, contentDescription = null, tint = MaterialTheme.colorScheme.primary) // Pallino
                             Spacer(Modifier.width(8.dp))
                             Text("Family Spend Tracker")
                             Spacer(Modifier.width(8.dp))
-                            Icon(Icons.Default.Star, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.Circle, contentDescription = null, tint = MaterialTheme.colorScheme.primary) // Pallino
                         }
                     },
                     navigationIcon = {
