@@ -164,10 +164,7 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
                 .clickable { datePickerDialog.show() }
         )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(checked = isPlanned, onCheckedChange = { isPlanned = it })
-            Text("Spesa pianificata")
-        }
+
 
         Button(
             onClick = {
@@ -210,6 +207,11 @@ fun AddExpenseScreen(viewModel: ExpenseViewModel) {
                     description = description
                 )
                 viewModel.addExpense(expense)
+                
+                // Conferma l'inserimento della spesa
+                Toast.makeText(context, "Spesa inserita correttamente!", Toast.LENGTH_SHORT).show()
+                
+                // Reimposta i campi del form
                 amount = ""
                 description = ""
             },
