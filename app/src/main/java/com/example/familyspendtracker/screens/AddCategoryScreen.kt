@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.familyspendtracker.data.Category
 import com.example.familyspendtracker.viewmodel.ExpenseViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,86 +43,101 @@ fun AddCategoryScreen(viewModel: ExpenseViewModel) {
 
     val categories by viewModel.categories.observeAsState(emptyList())
 
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-    ) {
-        Text("Aggiungi nuova categoria", style = MaterialTheme.typography.titleMedium)
+    // Stato per controllare se mostrare il messaggio di successo
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nome categoria") },
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
+        Column(
             modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        )
-
-        OutlinedTextField(
-            value = budget,
-            onValueChange = { newValue ->
-                budget = newValue
-                budgetError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
-            },
-            label = { Text("Budget iniziale") },
-            isError = budgetError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            singleLine = true
-        )
-
-        if (budgetError) {
-            Text(
-                text = "Inserire un numero valido (es. 123.45)",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable { datePickerDialog.show() }
         ) {
+            Text("Aggiungi nuova categoria", style = MaterialTheme.typography.titleMedium)
+
             OutlinedTextField(
-                value = formattedDate,
-                onValueChange = {},
-                label = { Text("Data inizio budget") },
-                readOnly = true,
-                enabled = false,
-                modifier = Modifier.fillMaxWidth()
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nome categoria") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             )
-        }
 
-        Button(
-            onClick = {
-                val parsedBudget = budget.toDoubleOrNull()
-                budgetError = parsedBudget == null
-                if (!budgetError) {
-                    val category = Category(
-                        name = name,
-                        initialBudget = parsedBudget!!,
-                        budgetStartDate = selectedDate
-                    )
-                    viewModel.addCategory(category)
-                    name = ""
-                    budget = ""
-                }
-            },
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text("Salva categoria")
-        }
+            OutlinedTextField(
+                value = budget,
+                onValueChange = { newValue ->
+                    budget = newValue
+                    budgetError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
+                },
+                label = { Text("Budget iniziale") },
+                isError = budgetError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                singleLine = true
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Categorie salvate:")
+            if (budgetError) {
+                Text(
+                    text = "Inserire un numero valido (es. 123.45)",
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
+            }
 
-        categories.forEach {
-            Text("- ${it.name}: ${it.initialBudget}")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { datePickerDialog.show() }
+            ) {
+                OutlinedTextField(
+                    value = formattedDate,
+                    onValueChange = {},
+                    label = { Text("Data inizio budget") },
+                    readOnly = true,
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Button(
+                onClick = {
+                    val parsedBudget = budget.toDoubleOrNull()
+                    budgetError = parsedBudget == null
+                    if (!budgetError) {
+                        val category = Category(
+                            name = name,
+                            initialBudget = parsedBudget!!,
+                            budgetStartDate = selectedDate
+                        )
+                        viewModel.addCategory(category)
+
+                        // Mostra il messaggio di successo
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Categoria aggiunta con successo!")
+                        }
+
+                        name = ""
+                        budget = ""
+                    }
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("Salva categoria")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Categorie salvate:")
+
+            categories.forEach {
+                Text("- ${it.name}: ${it.initialBudget}")
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.familyspendtracker.data.Wallet
 import com.example.familyspendtracker.viewmodel.ExpenseViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,85 +43,102 @@ fun AddWalletScreen(viewModel: ExpenseViewModel) {
 
     val wallets by viewModel.wallets.observeAsState(emptyList())
 
-    Column(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxWidth()) {
+    // Stato per mostrare la Snackbar
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
-        Text("Aggiungi nuovo wallet", style = MaterialTheme.typography.titleMedium)
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Nome wallet") },
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding ->
+        Column(
             modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
                 .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        )
-
-        OutlinedTextField(
-            value = balance,
-            onValueChange = { newValue ->
-                balance = newValue
-                balanceError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
-            },
-            label = { Text("Saldo iniziale") },
-            isError = balanceError,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            singleLine = true
-        )
-
-        if (balanceError) {
-            Text(
-                text = "Inserire un numero valido (es. 123.45)",
-                color = Color.Red,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-                .clickable { datePickerDialog.show() }
         ) {
+
+            Text("Aggiungi nuovo wallet", style = MaterialTheme.typography.titleMedium)
+
             OutlinedTextField(
-                value = formattedDate,
-                onValueChange = {},
-                label = { Text("Data di riferimento") },
-                readOnly = true,
-                enabled = false,
-                modifier = Modifier.fillMaxWidth()
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("Nome wallet") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
             )
-        }
 
-        Button(
-            onClick = {
-                val parsedBalance = balance.toDoubleOrNull()
-                balanceError = parsedBalance == null
-                if (!balanceError) {
-                    val wallet = Wallet(
-                        name = name,
-                        initialBalance = parsedBalance!!,
-                        currentBalance = parsedBalance
-                    )
-                    viewModel.addWallet(wallet)
-                    name = ""
-                    balance = ""
-                }
-            },
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text("Salva wallet")
-        }
+            OutlinedTextField(
+                value = balance,
+                onValueChange = { newValue ->
+                    balance = newValue
+                    balanceError = !newValue.matches(Regex("^\\d{0,7}(\\.\\d{0,2})?$"))
+                },
+                label = { Text("Saldo iniziale") },
+                isError = balanceError,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                singleLine = true
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            if (balanceError) {
+                Text(
+                    text = "Inserire un numero valido (es. 123.45)",
+                    color = Color.Red,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(start = 4.dp, bottom = 4.dp)
+                )
+            }
 
-        Text("Wallet salvati:")
-        wallets.forEach {
-            Text("- ${it.name}: ${it.initialBalance}")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+                    .clickable { datePickerDialog.show() }
+            ) {
+                OutlinedTextField(
+                    value = formattedDate,
+                    onValueChange = {},
+                    label = { Text("Data di riferimento") },
+                    readOnly = true,
+                    enabled = false,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Button(
+                onClick = {
+                    val parsedBalance = balance.toDoubleOrNull()
+                    balanceError = parsedBalance == null
+                    if (!balanceError) {
+                        val wallet = Wallet(
+                            name = name,
+                            initialBalance = parsedBalance!!,
+                            currentBalance = parsedBalance
+                        )
+                        viewModel.addWallet(wallet)
+
+                        // Mostra la snackbar
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Wallet aggiunto con successo!")
+                        }
+
+                        name = ""
+                        balance = ""
+                    }
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                Text("Salva wallet")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Wallet salvati:")
+            wallets.forEach {
+                Text("- ${it.name}: ${it.initialBalance}")
+            }
         }
     }
 }
