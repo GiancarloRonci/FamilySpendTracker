@@ -78,7 +78,13 @@ fun EditCategoryScreen(viewModel: ExpenseViewModel, categoryId: Int, navControll
 
         OutlinedTextField(
             value = initialBudget,
-            onValueChange = { initialBudget = it },
+            onValueChange = {
+                initialBudget = it
+
+                // Aggiorna automaticamente la data di inizio bilancio all'ora corrente
+                val currentTimestamp = Calendar.getInstance().timeInMillis
+                selectedDate = currentTimestamp
+            },
             label = { Text("Budget iniziale") },
             modifier = Modifier
                 .fillMaxWidth()

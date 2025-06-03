@@ -1,5 +1,7 @@
 package com.example.familyspendtracker.screens
 
+// Importa Toast
+import android.widget.Toast
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
@@ -188,6 +190,9 @@ fun EditExpenseScreen(viewModel: ExpenseViewModel, expenseId: Int) {
                     planned = isPlanned
                 )
                 viewModel.updateExpense(updated)
+                
+                // Mostra Toast di conferma
+                Toast.makeText(context, "Spesa modificata con successo!", Toast.LENGTH_SHORT).show()
             },
             modifier = Modifier.padding(top = 12.dp)
         ) {
